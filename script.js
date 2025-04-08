@@ -6,7 +6,7 @@ const ctx = canvas.getContext('2d');
 
 // Load the background image (update path as needed):
 const backgroundImage = new Image();
-backgroundImage.src = 'design.png';
+backgroundImage.src = 'design1.png';
 
 // Up to 1200px wide (your future requirement).
 const maxWidth = 1000;
