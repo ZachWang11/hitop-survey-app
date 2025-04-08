@@ -1,89 +1,352 @@
-// Initialize the canvas
-const canvas = new fabric.Canvas('canvas', {
-    isDrawingMode: false, // We'll use circles, not freehand drawing
-    selection: false
-  });
-  
-  // Load your topology-optimized image (replace URL with your image)
-  fabric.Image.fromURL('YOUR_IMAGE_URL_HERE', (img) => {
-    img.scaleToWidth(600); // Adjust size as needed
-    canvas.add(img);
-    canvas.renderAll();
-  });
-  
-  // Let users draw circles
-  canvas.on('mouse:up', (e) => {
-    if (e.target) return; // Don't trigger if clicking an existing object
-  
-    // Create a circle where the user clicked
-    const circle = new fabric.Circle({
-      left: e.pointer.x,
-      top: e.pointer.y,
-      radius: 0, // Start with radius 0
-      fill: 'rgba(255, 0, 0, 0.3)', // Transparent red
-      stroke: 'red',
-      hasControls: false // Disable resizing handles
-    });
-  
-    // Let the user drag to adjust the circle size
-    canvas.add(circle);
-    canvas.setActiveObject(circle);
-  });
+/********************************************************
+ * 1. IMAGE & CANVAS SETUP
+ ********************************************************/
+const canvas = document.getElementById('drawCanvas');
+const ctx = canvas.getContext('2d');
 
-  // Define your grid parameters (adjust based on your HiTop setup)
-const GRID_SIZE = {
-    cols: 100, // Number of columns in your grid
-    rows: 50   // Number of rows
-  };
-  
-  // Image dimensions (must match the image you load)
-  const IMAGE_WIDTH = 600; // Same as img.scaleToWidth() above
-  const IMAGE_HEIGHT = 400; // Adjust based on your image
+// Load the background image (update path as needed):
+const backgroundImage = new Image();
+backgroundImage.src = 'design.png';
 
-function getAffectedGridCells(circle) {
-const cells = [];
-const centerX = circle.left; // Pixel X of circle center
-const centerY = circle.top;  // Pixel Y of circle center
-const radius = circle.radius;
+// Up to 1200px wide (your future requirement).
+const maxWidth = 1000;
 
-// Calculate cell size based on image and grid dimensions
-const cellWidth = IMAGE_WIDTH / GRID_SIZE.cols;
-const cellHeight = IMAGE_HEIGHT / GRID_SIZE.rows;
+// Grid details (if needed):
+const numCols = 240;
+const numRows = 80;
 
-// Find all cells within the circle
-for (let col = 0; col < GRID_SIZE.cols; col++) {
-    for (let row = 0; row < GRID_SIZE.rows; row++) {
-    // Calculate cell center coordinates
-    const cellCenterX = col * cellWidth + cellWidth / 2;
-    const cellCenterY = row * cellHeight + cellHeight / 2;
+// By default, let's hide the grid. Change to true if you want it shown.
+let showGrid = false;
 
-    // Check if cell center is inside the circle
-    const distance = Math.sqrt(
-        Math.pow(cellCenterX - centerX, 2) + 
-        Math.pow(cellCenterY - centerY, 2)
-    );
+let finalWidth, finalHeight;
 
-    if (distance <= radius) {
-        cells.push({ col, row }); // Record grid indices
-    }
-    }
-}
-return cells;
-}
+backgroundImage.onload = function() {
+  const naturalW = backgroundImage.naturalWidth;
+  const naturalH = backgroundImage.naturalHeight;
 
-function saveData() {
-    const circles = canvas.getObjects('circle');
-    const modifications = [];
-  
-    circles.forEach((circle) => {
-      modifications.push({
-        center: { x: circle.left, y: circle.top },
-        radius: circle.radius,
-        cells: getAffectedGridCells(circle)
-      });
-    });
-  
-    // Log the data (we'll send this to Qualtrics later)
-    console.log(modifications);
-    alert('Data saved! Close this window to continue.');
+  if (naturalW > maxWidth) {
+    const scale = maxWidth / naturalW;
+    finalWidth = maxWidth;
+    finalHeight = naturalH * scale;
+  } else {
+    finalWidth = naturalW;
+    finalHeight = naturalH;
   }
+
+  canvas.width = finalWidth;
+  canvas.height = finalHeight;
+
+  drawAll();
+};
+
+/********************************************************
+ * 2. DATA STRUCTURES
+ ********************************************************/
+// Each "Area of Interest" will be stored as an object:
+//  { points: [...], cells: [...] }
+let areasOfInterest = []; // Instead of "shapes"
+
+// Track which area is selected (-1 if none)
+let selectedIndex = -1;
+
+/********************************************************
+ * 3. DRAW EVERYTHING
+ ********************************************************/
+function drawAll() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+  // Optionally draw grid
+  if (showGrid) {
+    drawGrid();
+  }
+
+  // Draw each area of interest
+  areasOfInterest.forEach((area, i) => {
+    drawPolygon(area.points, i === selectedIndex);
+  });
+}
+
+/********************************************************
+ * 4. DRAW THE GRID (Optional)
+ ********************************************************/
+function drawGrid() {
+  const cellWidth = canvas.width / numCols;
+  const cellHeight = canvas.height / numRows;
+
+  ctx.strokeStyle = 'black';
+  ctx.lineWidth = 1;
+
+  // Vertical lines
+  for (let c = 0; c <= numCols; c++) {
+    const x = c * cellWidth;
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvas.height);
+    ctx.stroke();
+  }
+
+  // Horizontal lines
+  for (let r = 0; r <= numRows; r++) {
+    const y = r * cellHeight;
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+  }
+}
+
+/********************************************************
+ * 5. DRAW A POLYGON
+ ********************************************************/
+function drawPolygon(points, isSelected = false) {
+  if (points.length < 2) return;
+
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length; i++) {
+    ctx.lineTo(points[i].x, points[i].y);
+  }
+  ctx.closePath();
+
+  // Fill with semi-transparent white
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+  ctx.fill();
+
+  // Outline in white or yellow if selected
+  ctx.strokeStyle = isSelected ? 'yellow' : 'white';
+  ctx.lineWidth = isSelected ? 3 : 2;
+  ctx.stroke();
+}
+
+/********************************************************
+ * 6. POINT-IN-POLYGON & OVERLAP CHECK
+ ********************************************************/
+function isPointInPolygon(pt, polygon) {
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const xi = polygon[i].x, yi = polygon[i].y;
+    const xj = polygon[j].x, yj = polygon[j].y;
+
+    const intersect = ((yi > pt.y) !== (yj > pt.y)) &&
+      (pt.x < (xj - xi) * (pt.y - yi) / (yj - yi) + xi);
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
+
+// Check polygons for overlap
+function polygonsOverlap(polyA, polyB) {
+  if (doEdgesIntersect(polyA, polyB)) return true;
+  // Check if a vertex of A is inside B, or vice versa
+  if (isPointInPolygon(polyA[0], polyB)) return true;
+  if (isPointInPolygon(polyB[0], polyA)) return true;
+  return false;
+}
+
+function doEdgesIntersect(polyA, polyB) {
+  for (let i = 0; i < polyA.length - 1; i++) {
+    const a1 = polyA[i];
+    const a2 = polyA[i + 1];
+    for (let j = 0; j < polyB.length - 1; j++) {
+      const b1 = polyB[j];
+      const b2 = polyB[j + 1];
+      if (segmentsIntersect(a1, a2, b1, b2)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function segmentsIntersect(p1, p2, p3, p4) {
+  function orientation(a, b, c) {
+    const val = (b.y - a.y) * (c.x - b.x) - (b.x - a.x) * (c.y - b.y);
+    if (val === 0) return 0; 
+    return val > 0 ? 1 : 2; // 1=clockwise, 2=counterclockwise
+  }
+  function onSegment(a, b, c) {
+    return Math.min(a.x, c.x) <= b.x && b.x <= Math.max(a.x, c.x) &&
+           Math.min(a.y, c.y) <= b.y && b.y <= Math.max(a.y, c.y);
+  }
+
+  const o1 = orientation(p1, p2, p3);
+  const o2 = orientation(p1, p2, p4);
+  const o3 = orientation(p3, p4, p1);
+  const o4 = orientation(p3, p4, p2);
+
+  if (o1 !== o2 && o3 !== o4) return true;
+  if (o1 === 0 && onSegment(p1, p3, p2)) return true;
+  if (o2 === 0 && onSegment(p1, p4, p2)) return true;
+  if (o3 === 0 && onSegment(p3, p1, p4)) return true;
+  if (o4 === 0 && onSegment(p3, p2, p4)) return true;
+
+  return false;
+}
+
+/********************************************************
+ * 7. SELECT CELLS COVERED BY A POLYGON
+ ********************************************************/
+function getSelectedCells(points) {
+  const cellIndices = [];
+  const cellWidth = canvas.width / numCols;
+  const cellHeight = canvas.height / numRows;
+
+  for (let r = 0; r < numRows; r++) {
+    for (let c = 0; c < numCols; c++) {
+      const center = {
+        x: (c + 0.5) * cellWidth,
+        y: (r + 0.5) * cellHeight
+      };
+      if (isPointInPolygon(center, points)) {
+        cellIndices.push(r * numCols + c);
+      }
+    }
+  }
+  return cellIndices;
+}
+
+/********************************************************
+ * 8. DRAWING A NEW AREA OF INTEREST (MOUSE)
+ ********************************************************/
+let isDrawing = false;
+let currentPoints = [];
+
+function getCanvasPos(evt) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {
+    x: (evt.clientX - rect.left) * scaleX,
+    y: (evt.clientY - rect.top) * scaleY
+  };
+}
+
+// MOUSE DOWN: start new area or select existing
+canvas.addEventListener('mousedown', (evt) => {
+  if (!isDrawing) {
+    const clickPos = getCanvasPos(evt);
+
+    // Check if we clicked an existing area (topmost first)
+    let foundIndex = -1;
+    for (let i = areasOfInterest.length - 1; i >= 0; i--) {
+      if (isPointInPolygon(clickPos, areasOfInterest[i].points)) {
+        foundIndex = i;
+        break;
+      }
+    }
+    if (foundIndex !== -1) {
+      // select that area
+      selectedIndex = foundIndex;
+      drawAll();
+    } else {
+      // start drawing a new area
+      isDrawing = true;
+      selectedIndex = -1;
+      currentPoints = [ clickPos ];
+    }
+  }
+});
+
+canvas.addEventListener('mousemove', (evt) => {
+  if (!isDrawing) return;
+
+  currentPoints.push(getCanvasPos(evt));
+
+  drawAll(); // draw existing areas
+
+  // show the new area in progress
+  if (currentPoints.length > 1) {
+    ctx.beginPath();
+    ctx.moveTo(currentPoints[0].x, currentPoints[0].y);
+    for (let i = 1; i < currentPoints.length; i++) {
+      ctx.lineTo(currentPoints[i].x, currentPoints[i].y);
+    }
+    ctx.lineTo(currentPoints[0].x, currentPoints[0].y);
+    ctx.closePath();
+
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.fill();
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+});
+
+canvas.addEventListener('mouseup', () => {
+  if (isDrawing) {
+    if (currentPoints.length > 2) {
+      // close polygon
+      currentPoints.push(currentPoints[0]);
+
+      // check overlap
+      let overlaps = false;
+      for (const aoI of areasOfInterest) {
+        if (polygonsOverlap(currentPoints, aoI.points)) {
+          overlaps = true;
+          break;
+        }
+      }
+
+      if (overlaps) {
+        alert("New Region of Interest overlaps an existing one. Discarding it.");
+      } else {
+        // compute selected cells
+        const cellIndices = getSelectedCells(currentPoints);
+
+        // store
+        areasOfInterest.push({
+          points: currentPoints,
+          cells: cellIndices
+        });
+      }
+    }
+    isDrawing = false;
+    currentPoints = [];
+    drawAll();
+    // NOTE: We do NOT show results yet; user must click "Finish Drawing"
+  }
+});
+
+/********************************************************
+ * 9. DELETE AREA (Backspace/Delete)
+ ********************************************************/
+document.addEventListener('keydown', (evt) => {
+  if (evt.key === 'Backspace' || evt.key === 'Delete') {
+    evt.preventDefault();
+    if (selectedIndex !== -1) {
+      areasOfInterest.splice(selectedIndex, 1);
+      selectedIndex = -1;
+      drawAll();
+      // Still no auto-display of cells
+    }
+  }
+});
+
+/********************************************************
+ * 10. FINISH DRAWING BUTTON => DISPLAY RESULTS
+ ********************************************************/
+document.getElementById('finishDrawingButton').addEventListener('click', () => {
+  updateCellsDisplay(); // Only now do we show the results
+});
+
+/********************************************************
+ * 11. SHOW RESULTS IN #output
+ ********************************************************/
+function updateCellsDisplay() {
+  const outputEl = document.getElementById('output');
+
+  // If no areas exist, you can decide what to show:
+  if (areasOfInterest.length === 0) {
+    outputEl.textContent = "No Areas of Interest created yet.";
+    return;
+  }
+
+  let msg = '';
+  areasOfInterest.forEach((area, i) => {
+    // Each area on its own line:
+    msg += `Region of Interest ${i + 1} has ${area.cells.length} elements: [${area.cells.join(', ')}]\n\n`;
+  });
+
+  outputEl.textContent = msg;
+}
