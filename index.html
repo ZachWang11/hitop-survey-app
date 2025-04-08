@@ -1,15 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>HiTop Design Modifier</title>
+  <meta charset="UTF-8">
+  <title>Design Scenario 1</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Load Fabric.js (a drawing library) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
 </head>
 <body>
-  <h1>Modify the Design</h1>
-  <canvas id="canvas"></canvas>
-  <button onclick="saveData()">Save Changes</button>
+
+  <div class="container">
+    <h1>Design Scenario 1</h1>
+    <p>
+      Below is the optimized design for an MBB beam (a benchmark problem in topology optimization).
+      It represents half of a simply supported beam with a downward force at the center.
+      Please evaluate the design based on your engineering knowledge and experience.
+      If you think certain members should be modified, please feel free to draw around them:
+      click, hold, and drag your mouse to outline the region or interest. 
+      If you need to delete certain region, click on it and hit backspace. 
+      When finished, click "Finish Drawing."
+    </p>
+
+    <div class="canvas-wrapper">
+      <canvas id="drawCanvas"></canvas>
+    </div>
+
+    <button id="finishDrawingButton">Finish Drawing</button>
+
+    <pre id="output"></pre>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
