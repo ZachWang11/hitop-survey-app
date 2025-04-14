@@ -1,23 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Design Scenario 1</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Design Scenario</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
   <div class="container">
-    <h1>Design Scenario 1</h1>
-    <p>
-      Below is the optimized design for an MBB beam (a benchmark problem in topology optimization).
-      It represents half of a simply supported beam with a downward force at the center.
-      Please evaluate the design based on your engineering knowledge and experience.
-      If you think certain members should be modified, please feel free to draw around them:
-      click, hold, and drag your mouse to outline the region or interest. 
-      If you need to delete certain region, click on it and hit backspace. 
-      When finished, click "Finish Drawing."
-    </p>
+    <h1 id="scenarioTitle">Design Scenario</h1>
+    <p id="scenarioDescription">Loading scenario...</p>
 
     <div class="canvas-wrapper">
       <canvas id="drawCanvas"></canvas>
@@ -28,6 +20,36 @@
     <pre id="output"></pre>
   </div>
 
+  <!-- Dynamic title and description based on scenario -->
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const scenarioNumber = parseInt(urlParams.get('scenario')) || 1;
+
+    // Update page <title>
+    document.title = `Design Scenario ${scenarioNumber}`;
+
+    // Scenario title and instructions
+    const titles = {
+      1: "Design Scenario 1: MBB Beam",
+      2: "Design Scenario 2: Cantilever Beam with Tip Load",
+      3: "Design Scenario 3: Fixed–Fixed Beam with Central Load",
+      4: "Design Scenario 4: L-Bracket with Tip Load",
+      5: "Design Scenario 5: Short Cantilever with Side Load"
+    };
+
+    const descriptions = {
+      1: "Below is the optimized design for an MBB beam. It represents half of a simply supported beam with a downward force at the center. Please evaluate the design based on your engineering knowledge and experience. Draw around any region you believe should be modified.",
+      2: "This is a cantilever beam fixed on the left with a downward point load at the tip (top-right). Review how effectively the structure transfers the load to the support.",
+      3: "This represents a fixed–fixed beam with a central downward force. Evaluate whether material is distributed efficiently between the supports.",
+      4: "This is an L-bracket where the vertical leg is fixed and a tip load is applied at the end of the horizontal leg. Consider how the structure transfers the load around the corner.",
+      5: "This short cantilever panel is fixed on the left and loaded at mid-height on the right. Assess whether the structure carries the eccentric load effectively."
+    };
+
+    document.getElementById("scenarioTitle").textContent = titles[scenarioNumber] || "Design Scenario";
+    document.getElementById("scenarioDescription").textContent = descriptions[scenarioNumber] || "Evaluate the optimized structure by selecting regions of interest.";
+  </script>
+
+  <!-- Drawing logic -->
   <script src="script.js"></script>
 </body>
 </html>
