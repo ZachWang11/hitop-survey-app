@@ -349,7 +349,8 @@ function updateCellsDisplay() {
   outputEl.textContent = msg;
 
   // Send to Qualtrics
-  const dataToSave = JSON.stringify(areasOfInterest);
+  const cellDataOnly = areasOfInterest.map(a => a.cells);
+  const dataToSave = JSON.stringify(cellDataOnly);
   window.parent.postMessage({
     type: 'saveToQualtrics',
     data: dataToSave
