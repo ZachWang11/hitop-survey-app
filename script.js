@@ -7,7 +7,10 @@ const ctx = canvas.getContext('2d');
 // Load the background image (update path as needed):
 // Detect scenario number from the URL query string (e.g., ?scenario=2)
 const urlParams = new URLSearchParams(window.location.search);
-const scenarioNumber = parseInt(urlParams.get('scenario')) || 1;
+let scenarioNumber = parseInt(urlParams.get('scenario'));
+if (![1, 2, 3, 4, 5].includes(scenarioNumber)) {
+  scenarioNumber = 1;
+}
 const backgroundImagePath = `design${scenarioNumber}.png`;
 
 // Load the appropriate image
