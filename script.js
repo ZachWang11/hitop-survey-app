@@ -331,12 +331,11 @@ document.getElementById('finishDrawingButton').addEventListener('click', () => {
 });
 
 /********************************************************
- * 11. SHOW RESULTS IN #output
+ * 11. SAVE RESULTS IN QUALTRICS
  ********************************************************/
 function updateCellsDisplay() {
   const outputEl = document.getElementById('output');
 
-  // If no areas exist, you can decide what to show:
   if (areasOfInterest.length === 0) {
     outputEl.textContent = "No Areas of Interest created yet.";
     return;
@@ -344,9 +343,15 @@ function updateCellsDisplay() {
 
   let msg = '';
   areasOfInterest.forEach((area, i) => {
-    // Each area on its own line:
     msg += `Region of Interest ${i + 1} has ${area.cells.length} elements: [${area.cells.join(', ')}]\n\n`;
   });
 
   outputEl.textContent = msg;
+
+  // Send to Qualtrics
+  const dataToSave = JSON.stringify(areasOfInterest);
+  window.parent.postMessage({
+    type: 'saveToQualtrics',
+    data: dataToSave
+  }, '*');
 }
