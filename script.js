@@ -5,8 +5,14 @@ const canvas = document.getElementById('drawCanvas');
 const ctx = canvas.getContext('2d');
 
 // Load the background image (update path as needed):
+// Detect scenario number from the URL query string (e.g., ?scenario=2)
+const urlParams = new URLSearchParams(window.location.search);
+const scenarioNumber = parseInt(urlParams.get('scenario')) || 1;
+const backgroundImagePath = `design${scenarioNumber}.png`;
+
+// Load the appropriate image
 const backgroundImage = new Image();
-backgroundImage.src = 'design1.png';
+backgroundImage.src = backgroundImagePath;
 
 // Up to 1200px wide (your future requirement).
 const maxWidth = 1000;
@@ -351,6 +357,7 @@ function updateCellsDisplay() {
   // Send to Qualtrics
   const cellDataOnly = areasOfInterest.map(a => a.cells);
   const dataToSave = JSON.stringify(cellDataOnly);
+
   window.parent.postMessage({
     type: 'saveToQualtrics',
     data: dataToSave
