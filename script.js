@@ -8,13 +8,27 @@ const ctx = canvas.getContext('2d');
 // Detect scenario number from the URL query string (e.g., ?scenario=2)
 const urlParams = new URLSearchParams(window.location.search);
 let scenarioNumber = parseInt(urlParams.get('scenario'));
-if (![1, 2, 3, 4, 5].includes(scenarioNumber)) {
+
+let backgroundImagePath = '';
+if (scenarioNumber === 1) {
+  backgroundImagePath = 'design1.png';
+} else if (scenarioNumber === 2) {
+  backgroundImagePath = 'design2.png';
+} else if (scenarioNumber === 3) {
+  backgroundImagePath = 'design3.png';
+} else if (scenarioNumber === 4) {
+  backgroundImagePath = 'design4.png';
+} else if (scenarioNumber === 5) {
+  backgroundImagePath = 'design5.png';
+} else {
+  // fallback in case the number is invalid
+  backgroundImagePath = 'design1.png';
   scenarioNumber = 1;
 }
 
 // Load the appropriate image
 const backgroundImage = new Image();
-backgroundImage.src = `design${scenarioNumber}.png`;
+backgroundImage.src = backgroundImagePath;
 
 // Up to 1200px wide (your future requirement).
 const maxWidth = 1000;
