@@ -11,11 +11,10 @@ let scenarioNumber = parseInt(urlParams.get('scenario'));
 if (![1, 2, 3, 4, 5].includes(scenarioNumber)) {
   scenarioNumber = 1;
 }
-const backgroundImagePath = `design${scenarioNumber}.png`;
 
 // Load the appropriate image
 const backgroundImage = new Image();
-backgroundImage.src = backgroundImagePath;
+backgroundImage.src = `design${scenarioNumber}.png`;
 
 // Up to 1200px wide (your future requirement).
 const maxWidth = 1000;
