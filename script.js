@@ -1,32 +1,39 @@
 /********************************************************
- * 1. IMAGE & CANVAS SETUP
+ * 1. IMAGE & CANVAS SETUP & DESIGN SCENARIO DETECTION
  ********************************************************/
 const canvas = document.getElementById('drawCanvas');
 const ctx = canvas.getContext('2d');
 
-// Load the background image (update path as needed):
-// Detect scenario number from the URL query string (e.g., ?scenario=2)
 const urlParams = new URLSearchParams(window.location.search);
 let scenarioNumber = parseInt(urlParams.get('scenario'));
-
-let backgroundImagePath = '';
-if (scenarioNumber === 1) {
-  backgroundImagePath = 'design1.png';
-} else if (scenarioNumber === 2) {
-  backgroundImagePath = 'design2.png';
-} else if (scenarioNumber === 3) {
-  backgroundImagePath = 'design3.png';
-} else if (scenarioNumber === 4) {
-  backgroundImagePath = 'design4.png';
-} else if (scenarioNumber === 5) {
-  backgroundImagePath = 'design5.png';
-} else {
-  // fallback in case the number is invalid
-  backgroundImagePath = 'design1.png';
+if (![1, 2, 3, 4, 5].includes(scenarioNumber)) {
   scenarioNumber = 1;
 }
+const backgroundImagePath = `design${scenarioNumber}.png`;
 
-// Load the appropriate image
+document.title = `Design Scenario ${scenarioNumber}`;
+document.getElementById("scenarioTitle").textContent = `Design Scenario ${scenarioNumber}`;
+
+const descriptions = {
+  1: "Below is the optimized design for an MBB beam (a benchmark problem in topology optimization). " +
+     "It represents half of a simply supported beam with a downward force at the center. " +
+     "Please evaluate the design based on your engineering knowledge and experience. " +
+     "If you think certain members should be modified, please feel free to draw around them: " +
+     "click, hold, and drag your mouse to outline the region or interest. " +
+     "If you need to delete certain region, click on it and hit backspace. " +
+     "When finished, click 'Finish Drawing.'",
+  2: "This is a cantilever beam fixed on the left with a downward point load at the tip (top-right). " +
+     "Review how effectively the structure transfers the load to the support.",
+  3: "This design represents a fixed–fixed beam with a central downward force. " +
+     "Evaluate whether material is distributed efficiently between the supports.",
+  4: "This L-bracket structure has its vertical leg fixed and a tip load applied to the horizontal leg. " +
+     "Consider how the structure transfers the load around the corner.",
+  5: "This short cantilever panel is fixed on the left and loaded at mid-height on the right. " +
+     "Assess whether the structure carries the eccentric load effectively."
+};
+
+document.getElementById("scenarioDescription").textContent = descriptions[scenarioNumber];
+
 const backgroundImage = new Image();
 backgroundImage.src = backgroundImagePath;
 
@@ -57,7 +64,7 @@ backgroundImage.onload = function() {
 
   canvas.width = finalWidth;
   canvas.height = finalHeight;
-
+  
   drawAll();
 };
 
