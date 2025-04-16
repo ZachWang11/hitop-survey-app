@@ -21,27 +21,27 @@ const descriptions = {
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
      "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
-     "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
+     "When you're satisfied with your edits, please make sure to click 'Finish Drawing' to record your input.",
   2: "This is a cantilever beam fixed on the left with a downward point load at the right end.\n\n" +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
      "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
-     "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
+     "When you're satisfied with your edits, please make sure to click 'Finish Drawing' to record your input.",
   3: "This design represents a fixed–fixed beam with a central downward force.\n\n" +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
      "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
-     "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
+     "When you're satisfied with your edits, please make sure to click 'Finish Drawing' to record your input.",
   4: "This design represents a simply-supported beam with a downward load applied at one-third of the span from the left end.\n\n" +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
      "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
-     "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
+     "When you're satisfied with your edits, please make sure to click 'Finish Drawing' to record your input.",
   5: "This design represents a simply-supported beam subjected to a downward uniform load across the top surface.\n\n" +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
      "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
-     "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
+     "When you're satisfied with your edits, please make sure to click 'Finish Drawing' to record your input.",
 };
 
 document.getElementById("scenarioDescription").textContent = descriptions[scenarioNumber];
