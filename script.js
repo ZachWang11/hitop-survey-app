@@ -16,7 +16,7 @@ document.getElementById("scenarioTitle").textContent = `Design Scenario ${scenar
 
 const descriptions = {
   1: "Below is the optimized design for an MBB beam (a benchmark problem in topology optimization). " +
-     "It represents half of a simply supported beam with a downward force at the center (top left corner of the right half). " +
+     "It represents half of a simply supported beam, with a downward force applied at the center (top-left corner of the right half of the beam). " +
      "Please evaluate the design based on your engineering knowledge and experience.\n\n" +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
      "by clicking, holding, and dragging your mouse. To remove a shape, simply click on it and press backspace. " +
