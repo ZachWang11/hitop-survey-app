@@ -384,7 +384,7 @@ function updateCellsDisplay() {
 
   let msg = '';
   areasOfInterest.forEach((area, i) => {
-    msg += `Region of Interest ${i + 1} has ${area.cells.length} elements: [${area.cells.join(', ')}]\n\n`;
+    msg += `Region of Interest ${i + 1} has ${area.cells.length} elements\n`;
   });
 
   outputEl.textContent = msg;
