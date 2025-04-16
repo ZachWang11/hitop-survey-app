@@ -19,27 +19,27 @@ const descriptions = {
      "It represents half of a simply supported beam, with a downward force applied at the center (top-left corner of the right half of the beam). " +
      "Please evaluate the design based on your engineering knowledge and experience.\n\n" +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
-     "by clicking, holding, and dragging your mouse. To remove a shape, simply click on it and press backspace. " +
+     "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
      "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
   2: "This is a cantilever beam fixed on the left with a downward point load at the right end.\n\n" +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
-     "by clicking, holding, and dragging your mouse. To remove a shape, simply click on it and press backspace. " +
+     "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
      "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
   3: "This design represents a fixed–fixed beam with a central downward force.\n\n" +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
-     "by clicking, holding, and dragging your mouse. To remove a shape, simply click on it and press backspace. " +
+     "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
      "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
   4: "This design represents a simply-supported beam with a downward load applied at one-third of the span from the left end.\n\n" +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
-     "by clicking, holding, and dragging your mouse. To remove a shape, simply click on it and press backspace. " +
+     "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
      "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
   5: "This design represents a simply-supported beam subjected to a downward uniform load across the top surface.\n\n" +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
-     "by clicking, holding, and dragging your mouse. To remove a shape, simply click on it and press backspace. " +
+     "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
      "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
 };
