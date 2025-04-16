@@ -16,20 +16,32 @@ document.getElementById("scenarioTitle").textContent = `Design Scenario ${scenar
 
 const descriptions = {
   1: "Below is the optimized design for an MBB beam (a benchmark problem in topology optimization). " +
-     "It represents half of a simply supported beam with a downward force at the center. " +
-     "Please evaluate the design based on your engineering knowledge and experience. " +
-     "If you think certain members should be modified, please feel free to draw around them: " +
-     "click, hold, and drag your mouse to outline the region or interest. " +
-     "If you need to delete certain region, click on it and hit backspace. " +
-     "When finished, click 'Finish Drawing.'",
-  2: "This is a cantilever beam fixed on the left with a downward point load at the tip (top-right). " +
-     "Review how effectively the structure transfers the load to the support.",
+     "It represents half of a simply supported beam with a downward force at the center (top left corner of the right half). " +
+     "Please evaluate the design based on your engineering knowledge and experience.\n\n" +
+     "If you believe any parts of the structure should be modified, draw around the region of interest " +
+     "by clicking, holding, and dragging your mouse. To remove a shape, simply click on it and press backspace. " +
+     "You may draw multiple regions of interest; all regions will be saved together. " + 
+     "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
+  2: "This is a cantilever beam fixed on the left with a downward point load at the right end. " +
+     "If you believe any parts of the structure should be modified, draw around the region of interest " +
+     "by clicking, holding, and dragging your mouse. To remove a shape, simply click on it and press backspace. " +
+     "You may draw multiple regions of interest; all regions will be saved together. " + 
+     "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
   3: "This design represents a fixed–fixed beam with a central downward force. " +
-     "Evaluate whether material is distributed efficiently between the supports.",
-  4: "This L-bracket structure has its vertical leg fixed and a tip load applied to the horizontal leg. " +
-     "Consider how the structure transfers the load around the corner.",
-  5: "This short cantilever panel is fixed on the left and loaded at mid-height on the right. " +
-     "Assess whether the structure carries the eccentric load effectively."
+     "If you believe any parts of the structure should be modified, draw around the region of interest " +
+     "by clicking, holding, and dragging your mouse. To remove a shape, simply click on it and press backspace. " +
+     "You may draw multiple regions of interest; all regions will be saved together. " + 
+     "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
+  4: "This design represents a simply-supported beam with a downward load applied at one-third of the span from the left end." +
+     "If you believe any parts of the structure should be modified, draw around the region of interest " +
+     "by clicking, holding, and dragging your mouse. To remove a shape, simply click on it and press backspace. " +
+     "You may draw multiple regions of interest; all regions will be saved together. " + 
+     "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
+  5: "This design represents a simply-supported beam subjected to a downward uniform load across the top surface. " +
+     "If you believe any parts of the structure should be modified, draw around the region of interest " +
+     "by clicking, holding, and dragging your mouse. To remove a shape, simply click on it and press backspace. " +
+     "You may draw multiple regions of interest; all regions will be saved together. " + 
+     "When you're satisfied with your edits, click 'Finish Drawing' to continue.",
 };
 
 document.getElementById("scenarioDescription").textContent = descriptions[scenarioNumber];
