@@ -15,35 +15,53 @@ document.title = `Design Scenario ${scenarioNumber}`;
 document.getElementById("scenarioTitle").textContent = `Design Scenario ${scenarioNumber}`;
 
 const descriptions = {
-  1: "This is a cantilever beam fixed on the left with a downward point load at the right end." + 
-     "Please evaluate the design based on your engineering knowledge and experience.\n\n" +
+  1: "Scenario 1 features a cantilever beam fixed on the left with a downward point load at the right end.\n\n" + 
+     "Please evaluate the design based on your engineering knowledge and experience. " +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
      "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
      "When you're satisfied with your edits, please make sure to click 'Finish Drawing' to record your input.",
-  2: "This design represents a fixed–fixed beam with a central downward force.\n\n" +
+  2: "Scenario 2 features a fixed–fixed beam with a central downward load.\n\n" +
+     "Please evaluate the design based on your engineering knowledge and experience. " +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
      "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
      "When you're satisfied with your edits, please make sure to click 'Finish Drawing' to record your input.",
-  3: "This design represents a simply-supported beam with a downward load applied at one-third of the span from the left end.\n\n" +
+  3: "Scenario 3 features a simply-supported beam with a downward load applied at one-third of the span from the left end.\n\n" +
+     "Please evaluate the design based on your engineering knowledge and experience. " +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
      "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
      "When you're satisfied with your edits, please make sure to click 'Finish Drawing' to record your input.",
-  4: "This design represents a simply-supported beam subjected to a downward uniform load across the top surface.\n\n" +
+  4: "Scenario 4 features a simply-supported beam subjected to a downward uniform load across the top surface.\n\n" +
+     "Please evaluate the design based on your engineering knowledge and experience. " +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
      "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
      "When you're satisfied with your edits, please make sure to click 'Finish Drawing' to record your input.",
-  5: "This is a cantilever beam fixed on the left with a downward point load at the right end\n\n" +
+  5: "The last design scenario features the same cantilever beam in scenario 1. It's fixed on the left with a downward point load at the right end.\n\n" +
+     "Please evaluate the design based on your engineering knowledge and experience. " +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
      "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
      "When you're satisfied with your edits, please make sure to click 'Finish Drawing' to record your input.",
 };
 
-document.getElementById("scenarioDescription").textContent = descriptions[scenarioNumber];
+const diagramPath = `Beam_Diagram${scenarioNumber}.png`;
+const diagramElement = document.getElementById("beamDiagram");
+diagramElement.src = diagramPath;
+diagramElement.alt = `Beam diagram for Design Scenario ${scenarioNumber}`;
+
+// Split the description into two parts
+const fullDescription = descriptions[scenarioNumber];
+const splitIndex = fullDescription.indexOf("Please evaluate"); // this identifies the breakpoint
+
+const introText = fullDescription.slice(0, splitIndex).trim();
+const instructionsText = fullDescription.slice(splitIndex).trim();
+
+document.getElementById("scenarioIntro").textContent = introText;
+document.getElementById("scenarioInstructions").textContent = instructionsText;
+
 
 const backgroundImage = new Image();
 backgroundImage.src = backgroundImagePath;
