@@ -168,11 +168,11 @@ function drawPolygon(points, isSelected = false) {
   ctx.closePath();
 
   // Fill with semi-transparent white
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+  ctx.fillStyle = 'rgba(0, 200, 0, 0.3)';
   ctx.fill();
 
   // Outline in white or yellow if selected
-  ctx.strokeStyle = isSelected ? 'yellow' : 'white';
+  ctx.strokeStyle = isSelected ? 'yellow' : 'green';
   ctx.lineWidth = isSelected ? 3 : 2;
   ctx.stroke();
 }
@@ -323,9 +323,9 @@ canvas.addEventListener('mousemove', (evt) => {
     ctx.lineTo(currentPoints[0].x, currentPoints[0].y);
     ctx.closePath();
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+    ctx.fillStyle = 'rgba(0, 200, 0, 0.3)';
     ctx.fill();
-    ctx.strokeStyle = 'white';
+    ctx.strokeStyle = 'green';
     ctx.lineWidth = 2;
     ctx.stroke();
   }
