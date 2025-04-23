@@ -36,7 +36,7 @@ const descriptions = {
      "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
      "When you're satisfied with your edits, please make sure to click 'Finish Drawing' to record your input.",
-  1: "This is a cantilever beam fixed on the left with a downward point load at the right end\n\n" +
+  5: "This is a cantilever beam fixed on the left with a downward point load at the right end\n\n" +
      "If you believe any parts of the structure should be modified, draw around the region of interest " +
      "by clicking, holding, and dragging your mouse. To remove a region, simply click on it and press backspace. " +
      "You may draw multiple regions of interest; all regions will be saved together. " + 
