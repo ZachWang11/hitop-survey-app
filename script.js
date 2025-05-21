@@ -4,16 +4,20 @@
 const canvas = document.getElementById('drawCanvas');
 const ctx = canvas.getContext('2d');
 
+// Get the scenario number from URL parameters
 const urlParams = new URLSearchParams(window.location.search);
 let scenarioNumber = parseInt(urlParams.get('scenario'));
 if (![1, 2, 3, 4, 5].includes(scenarioNumber)) {
   scenarioNumber = 1;
 }
+// Set the background image based on the scenario number
 const backgroundImagePath = `design${scenarioNumber}.png`;
 
+// Update the document title and scenario title in the HTML
 document.title = `Design Scenario ${scenarioNumber}`;
 document.getElementById("scenarioTitle").textContent = `Design Scenario ${scenarioNumber}`;
 
+// Define descriptions for each scenario
 const descriptions = {
   1: "Scenario 1 features a cantilever beam fixed on the left with a downward point load at the right end.\n\n" + 
      "Please evaluate the design based on your engineering knowledge and experience. " +
@@ -47,6 +51,7 @@ const descriptions = {
      "When you're satisfied with your edits, please make sure to click 'Finish Drawing' to record your input.",
 };
 
+// Set the beam diagram image based on the scenario number
 const diagramPath = `Beam_Diagram${scenarioNumber}.png`;
 const diagramElement = document.getElementById("beamDiagram");
 diagramElement.src = diagramPath;
@@ -62,18 +67,17 @@ const instructionsText = fullDescription.slice(splitIndex).trim();
 document.getElementById("scenarioIntro").textContent = introText;
 document.getElementById("scenarioInstructions").textContent = instructionsText;
 
-
 const backgroundImage = new Image();
 backgroundImage.src = backgroundImagePath;
 
-// Up to 1200px wide (your future requirement).
+// Up to 1000px wide (your future requirement).
 const maxWidth = 1000;
 
-// Grid details (if needed):
+// Define the grid size:
 const numCols = 240;
 const numRows = 80;
 
-// By default, let's hide the grid. Change to true if you want it shown.
+// By default, hide the grid. Change to true if you want it shown.
 let showGrid = false;
 
 let finalWidth, finalHeight;
@@ -82,6 +86,7 @@ backgroundImage.onload = function() {
   const naturalW = backgroundImage.naturalWidth;
   const naturalH = backgroundImage.naturalHeight;
 
+  // Check if the image exceeds the maximum width and height and scale it down if necessary
   if (naturalW > maxWidth) {
     const scale = maxWidth / naturalW;
     finalWidth = maxWidth;
@@ -102,7 +107,7 @@ backgroundImage.onload = function() {
  ********************************************************/
 // Each "Area of Interest" will be stored as an object:
 //  { points: [...], cells: [...] }
-let areasOfInterest = []; // Instead of "shapes"
+let areasOfInterest = [];
 
 // Track which area is selected (-1 if none)
 let selectedIndex = -1;
@@ -110,6 +115,7 @@ let selectedIndex = -1;
 /********************************************************
  * 3. DRAW EVERYTHING
  ********************************************************/
+// This function draws the background image, grid (if enabled), and all areas of interest.
 function drawAll() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
@@ -128,6 +134,7 @@ function drawAll() {
 /********************************************************
  * 4. DRAW THE GRID (Optional)
  ********************************************************/
+// This function draws a grid overlay on the canvas.
 function drawGrid() {
   const cellWidth = canvas.width / numCols;
   const cellHeight = canvas.height / numRows;
@@ -157,6 +164,7 @@ function drawGrid() {
 /********************************************************
  * 5. DRAW A POLYGON
  ********************************************************/
+// This function draws a polygon based on an array of points.
 function drawPolygon(points, isSelected = false) {
   if (points.length < 2) return;
 
@@ -167,11 +175,11 @@ function drawPolygon(points, isSelected = false) {
   }
   ctx.closePath();
 
-  // Fill with semi-transparent white
+  // Fill in green or semi-transparent green if selected
   ctx.fillStyle = 'rgba(0, 200, 0, 0.3)';
   ctx.fill();
 
-  // Outline in white or yellow if selected
+  // Stroke in yellow if selected, otherwise green
   ctx.strokeStyle = isSelected ? 'yellow' : 'green';
   ctx.lineWidth = isSelected ? 3 : 2;
   ctx.stroke();
@@ -180,6 +188,7 @@ function drawPolygon(points, isSelected = false) {
 /********************************************************
  * 6. POINT-IN-POLYGON & OVERLAP CHECK
  ********************************************************/
+// This function checks if a point is inside a polygon using the ray-casting algorithm.
 function isPointInPolygon(pt, polygon) {
   let inside = false;
   for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
@@ -202,6 +211,7 @@ function polygonsOverlap(polyA, polyB) {
   return false;
 }
 
+// Check if any edges of two polygons intersect
 function doEdgesIntersect(polyA, polyB) {
   for (let i = 0; i < polyA.length - 1; i++) {
     const a1 = polyA[i];
@@ -217,6 +227,7 @@ function doEdgesIntersect(polyA, polyB) {
   return false;
 }
 
+// Check if two line segments intersect
 function segmentsIntersect(p1, p2, p3, p4) {
   function orientation(a, b, c) {
     const val = (b.y - a.y) * (c.x - b.x) - (b.x - a.x) * (c.y - b.y);
@@ -245,6 +256,7 @@ function segmentsIntersect(p1, p2, p3, p4) {
 /********************************************************
  * 7. SELECT CELLS COVERED BY A POLYGON
  ********************************************************/
+// This function computes the indices of cells that are covered by a polygon defined by points.
 function getSelectedCells(points) {
   const cellIndices = [];
   const cellWidth = canvas.width / numCols;
@@ -265,11 +277,12 @@ function getSelectedCells(points) {
 }
 
 /********************************************************
- * 8. DRAWING A NEW AREA OF INTEREST (MOUSE)
+ * 8. DRAWING A NEW AREA OF INTEREST
  ********************************************************/
 let isDrawing = false;
 let currentPoints = [];
 
+// Helper function to get canvas position from mouse event
 function getCanvasPos(evt) {
   const rect = canvas.getBoundingClientRect();
   const scaleX = canvas.width / rect.width;
@@ -280,7 +293,7 @@ function getCanvasPos(evt) {
   };
 }
 
-// MOUSE DOWN: start new area or select existing
+// Hold down the mouse left button: start new area or select existing
 canvas.addEventListener('mousedown', (evt) => {
   if (!isDrawing) {
     const clickPos = getCanvasPos(evt);
@@ -306,6 +319,7 @@ canvas.addEventListener('mousedown', (evt) => {
   }
 });
 
+// Move mouse: draw the area in progress
 canvas.addEventListener('mousemove', (evt) => {
   if (!isDrawing) return;
 
@@ -331,6 +345,7 @@ canvas.addEventListener('mousemove', (evt) => {
   }
 });
 
+// Release the mouse left button: finish drawing the area
 canvas.addEventListener('mouseup', () => {
   if (isDrawing) {
     if (currentPoints.length > 2) {
@@ -354,7 +369,7 @@ canvas.addEventListener('mouseup', () => {
 
         // store
         areasOfInterest.push({
-          points: currentPoints,
+          points: [...currentPoints],
           cells: cellIndices
         });
       }
@@ -367,8 +382,9 @@ canvas.addEventListener('mouseup', () => {
 });
 
 /********************************************************
- * 9. DELETE AREA (Backspace/Delete)
+ * 9. DELETE AREA (Backspace)
  ********************************************************/
+// This event listener allows the user to delete the selected area of interest by pressing Backspace or Delete.
 document.addEventListener('keydown', (evt) => {
   if (evt.key === 'Backspace' || evt.key === 'Delete') {
     evt.preventDefault();
@@ -384,13 +400,15 @@ document.addEventListener('keydown', (evt) => {
 /********************************************************
  * 10. FINISH DRAWING BUTTON => DISPLAY RESULTS
  ********************************************************/
+// This event listener handles the "Finish Drawing" button click to display the results.
 document.getElementById('finishDrawingButton').addEventListener('click', () => {
-  updateCellsDisplay(); // Only now do we show the results
+  updateCellsDisplay(); // Call the function to update the display and save results
 });
 
 /********************************************************
  * 11. SAVE RESULTS IN QUALTRICS
  ********************************************************/
+// This function displays the number of cells covered by the drawn areas of interest and sends the data to Qualtrics.
 function updateCellsDisplay() {
   const outputEl = document.getElementById('output');
 
@@ -407,11 +425,12 @@ function updateCellsDisplay() {
   outputEl.textContent = msg;
 
   // Send to Qualtrics
-  const cellDataOnly = areasOfInterest.map(a => a.cells);
-  const dataToSave = JSON.stringify(cellDataOnly);
+  const cellDataOnly = areasOfInterest.map(a => a.cells);    // Extract only the cell indices data
+  const dataToSave = JSON.stringify(cellDataOnly);           // Convert to JSON string
 
   window.parent.postMessage({
     type: 'saveToQualtrics',
+    scenario: scenarioNumber,
     data: dataToSave
   }, '*');
 }
